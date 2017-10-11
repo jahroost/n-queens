@@ -79,12 +79,34 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      var counter = 0;
+      var row = this.get(rowIndex);
+      for (var i = 0; i < row.length; i++) {
+        if (row[i] === 1) {
+          counter++; 
+        }
+        if (counter > 1) {
+          return true;
+        }
+
+      }
+      return false;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      var row = 0;
+      var flag = false;
+      // Iterate through rows in the array. If row is undefined, that's the end of it.
+      while (this.get(row) !== undefined) {
+        flag = this.hasRowConflictAt(row);
+        // Increment row.
+        if (flag) {
+          return flag;
+        }
+        row++;
+      } return flag;
+      //return false; // fixme
     },
 
 
@@ -94,12 +116,38 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
+      var row = 0;
+      var colArr = [];
+      var counter = 0;
+      while (this.get(row) !== undefined) {
+        colArr.push(this.get(row)[colIndex]);
+        row++;
+      }
+      for (var i = 0; i < colArr.length; i++) {
+        if (colArr[i] === 1) {
+          counter++;
+        }
+        if (counter > 1) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      return false; // fixme
+      var n = 0;
+      var flag = false;
+      // Iterate through rows in the array. If row is undefined, that's the end of it.
+      while (this.get(n) !== undefined) {
+        debugger;
+        flag = this.hasColConflictAt(n);
+        // Increment row.
+        if (flag) {
+          return flag;
+        }
+        n++;
+      } return flag;
     },
 
 
