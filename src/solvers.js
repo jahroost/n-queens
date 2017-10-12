@@ -16,8 +16,52 @@
 
 
 window.findNRooksSolution = function(n) {
-  var solution = undefined; //fixme
-
+  var copyBoard = function(board) {
+    var newBoard = [];
+    var size = board.get('n');
+    for (var r = 0; r < size; r++) {
+      var row = board.get(r);
+      var arr = [];
+      for (var c = 0; c < size; c++) {
+        arr.push(row[c]);
+      }
+      newBoard.push(arr);
+    }
+    return newBoard;
+  };
+  
+  
+  
+  var solution; //fixme
+  var board = new Board({n: n});
+  var row = 0;
+  var col = 0;
+  var flag = false;
+  // while loop if row is less than size of the board
+  while (row < n) {
+    board.get(row, col);
+    if (!board.hasAnyRowConflicts() && !board.hasAnyColConflicts()) {
+      solution = copyBoard(board);
+    } else {
+      board = copyBoard(board);
+    }
+    console.log(board);
+    col++;
+    if (col >= n) {
+      col = 0;
+      row++;
+    }
+  }
+  //function to copy board onto new board
+  
+  //  // place chess piece on board
+  //  // var flag = check for failures on board
+  //  // if flag is true
+  //    // solution = board
+  //  // increment the column
+  //  // if column is >= size of board
+  //    // set column equal to 0
+  //    // increment row by 1
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
 };
