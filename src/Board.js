@@ -191,12 +191,10 @@
       // Iterate through possible equations
       while (index < size) {
         if (this.hasMajorDiagonalConflictAt(index)) {
-          console.log(true);
           return true;
         }
         index++;
       }
-      console.log(false);
       return false;
     },
 
@@ -207,7 +205,6 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      console.log("starting index: ", minorDiagonalColumnIndexAtFirstRow);
       var col = minorDiagonalColumnIndexAtFirstRow;
       var row = 0;
       var diag = [];
@@ -244,12 +241,10 @@
       // Iterate through possible equations
       while (index > 0) {
         if (this.hasMinorDiagonalConflictAt(index)) {
-          console.log(true);
           return true;
         }
         index--;
       }
-      console.log(false);
       return false;
     }
 
