@@ -16,6 +16,15 @@
 
 
 window.findNRooksSolution = function(n) {
+  var size = n;
+  var currentBoard = new Board({n: size});
+  var solutionBoard;
+  var row = 0;
+  var col = 0;
+  var flag = false;
+  console.log("My size is...", size);
+
+  // Take board object and return the matrix
   var copyBoard = function(board) {
     var newBoard = [];
     var size = board.get('n');
@@ -30,28 +39,55 @@ window.findNRooksSolution = function(n) {
     return newBoard;
   };
   
-  
-  
-  var solution; //fixme
-  var board = new Board({n: n});
-  var row = 0;
-  var col = 0;
-  var flag = false;
-  // while loop if row is less than size of the board
+  // As long as the row is less than the size...
   while (row < n) {
-    board.get(row, col);
-    if (!board.hasAnyRowConflicts() && !board.hasAnyColConflicts()) {
-      solution = copyBoard(board);
+    debugger;
+
+    // ... Toggle a chess piece on the board.
+    currentBoard.togglePiece(row, col);
+
+    // Check for row failures and column failures after placing the piece.
+    var hasNoRowConflicts = !currentBoard.hasAnyRowConflicts();
+    var hasNoColConflicts = !currentBoard.hasAnyColConflicts();
+    
+    if (hasNoRowConflicts && hasNoColConflicts) {
+      solutionBoard = new Board(copyBoard(currentBoard));
     } else {
-      board = copyBoard(board);
+      currentBoard = new Board(copyBoard(solutionBoard));
     }
-    console.log(board);
+
+    // If there are NO FAILURES:
+    //  ... make the current OBJECT board the solution OBJECT board by creating
+    //  a new solution OBJECT board
+    //  solutionBoard = currentBoard.
+    // Otherwise...
+    //  ... currentBoard = solutionBoard.
+
     col++;
     if (col >= n) {
       col = 0;
       row++;
     }
-  }
+  } 
+
+  // while loop if row is less than size of the board...
+  // while (row < n) {
+  //   debugger;
+  //   console.log("HELLO!");
+  //   board.togglePiece(row, col);
+  //   if (!board.hasAnyRowConflicts() && !board.hasAnyColConflicts()) {
+  //     solution = copyBoard(board);
+  //   } else {
+  //     console.log(board);
+  //     console.log(copyBoard(board));
+  //     board = new Board(copyBoard(board));
+  //   }
+  //   col++;
+  //   if (col >= n) {
+  //     col = 0;
+  //     row++;
+  //   }
+  // }
   //function to copy board onto new board
   
   //  // place chess piece on board
@@ -62,8 +98,8 @@ window.findNRooksSolution = function(n) {
   //  // if column is >= size of board
   //    // set column equal to 0
   //    // increment row by 1
-  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
-  return solution;
+  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solutionBoard));
+  return copyBoard(solutionBoard);
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
