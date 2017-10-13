@@ -61,8 +61,6 @@ window.findNRooksSolution = function(n) {
     // Check for row failures and column failures after placing the piece.
     var hasNoRowConflicts = !currentBoard.hasAnyRowConflicts();
     var hasNoColConflicts = !currentBoard.hasAnyColConflicts();
-    var hasNoMajorDiagonalConflicts = !currentBoard.hasAnyMajorDiagonalConflicts();
-    var hasNoMinorDiagonalConflicts = !currentBoard.hasAnyMinorDiagonalConflicts();
     
     if (hasNoRowConflicts && hasNoColConflicts) {
       solutionBoard = new Board(copyBoard(currentBoard));
@@ -233,18 +231,17 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  if (n === 0) {
-    return [];
-  }
-  var size = n;
-  var currentBoard = new Board({n: size});
-  var solutionBoard;
-  var row = 0;
-  var col = 0;
-  var flag = false;
+  return "no solution";
+};
 
-  // Take board object and return the matrix
-  var copyBoard = function(board) {
+// return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
+window.countNQueensSolutions = function(n) {
+  if (n === 0) {
+    return 1;
+  }
+  
+  // Takes board and returns its matrix.
+  var translateBoardToMatrix = function(board) {
     var newBoard = [];
     var size = board.get('n');
     for (var r = 0; r < size; r++) {
@@ -258,57 +255,85 @@ window.findNQueensSolution = function(n) {
     return newBoard;
   };
   
-  var displayBoard = function(matrix, k) {
-    var boardString = '';
-    console.log('\nBOARD:');
-    console.log('Size: ', k);
-    for (var i = 0; i < k; i++) {
-      for (var j = 0; j < k; j++) {
-        boardString += matrix[i][j] + ' ';
-      }
-      boardString += '\n';
+  // Sees if there are conflics on the board.
+  var hasQueenConflicts = function(board) {
+    var hasNoColConflicts = !board.hasAnyColConflicts();
+    var hasNoRowConflicts = !board.hasAnyRowConflicts();
+    var hasNoMajorDiagonalConflicts = !board.hasAnyMajorDiagonalConflicts();
+    var hasNoMinorDiagonalConflicts = !board.hasAnyMinorDiagonalConflicts();
+    if (hasNoColConflicts && hasNoRowConflicts && hasNoMajorDiagonalConflicts && hasNoMinorDiagonalConflicts) {
+      return false;
+    } else {
+      return true;
     }
-    console.log(boardString + '\n');
+  }
+  
+  // remove
+  n = 3;
+  // remove
+  
+  // Holds solution variables.
+  var solutionHolder = [];
+  var solutionCount;
+  
+  // Get board properties.
+  var currentBoard = new Board({n: n});
+  var size = n;
+  var numOfElements = size * size;
+  
+  // Recursive function.
+  var goThroughSolutionTree = function(previousBoard) {
+    // Set row and column equal to 0.
+    var row = 0;
+    var col = 0;
+    
+    // Grab matrix from previous board so you can read it.
+    var boardMatrix = translateBoardToMatrix(previousBoard);
+    
+    // Create new board so you don't mutate original.
+    var board = new Board(boardMatrix);
+    debugger;
+    // Iterate through elements on the board.
+    for (var element = 0; element < numOfElements; element++) {
+      debugger;
+      var conflicts = false;
+      if (boardMatrix[row][col] === 0) {
+        debugger;
+        // Toggle piece.
+        board.togglePiece(row, col);
+        // Check for conflicts after placing piece on board.
+        conflicts = hasQueenConflicts(board);
+        if (!conflicts) {
+          debugger;
+          // Create new board.
+          var boardMatrix = translateBoardToMatrix(board);
+          var newBoard = new Board(boardMatrix);
+          // Recurse through function with new board possibility.
+          goThroughSolutionTree(newBoard);
+        } else if (boardMatrix[row][col] === 1) {
+          
+          board.togglePiece(row, col);
+        }
+      }  
+      // Add to column.
+      col++;
+      // Reset column and row.
+      // This if statement moves to next line on matrix.
+      if (col % size === 0) {
+        col = 0;
+        row++;
+      }
+    }
+    console.log(translateBoardToMatrix(board));
+    solutionHolder.push(translateBoardToMatrix(board));
   };
   
-  // As long as the row is less than the size...
-  while (row < n) {
-
-    // ... Toggle a chess piece on the board.
-    currentBoard.togglePiece(row, col);
-
-    // Check for row failures and column failures after placing the piece.
-    var hasNoRowConflicts = !currentBoard.hasAnyRowConflicts();
-    var hasNoColConflicts = !currentBoard.hasAnyColConflicts();
-    var hasNoMajorDiagonalConflicts = !currentBoard.hasAnyMajorDiagonalConflicts();
-    var hasNoMinorDiagonalConflicts = !currentBoard.hasAnyMinorDiagonalConflicts();
-    
-    if (hasNoRowConflicts && hasNoColConflicts && hasNoMajorDiagonalConflicts && hasNoMinorDiagonalConflicts) {
-      solutionBoard = new Board(copyBoard(currentBoard));
-    } else {
-      currentBoard = new Board(copyBoard(solutionBoard));
-    }
-
-    // If there are NO FAILURES:
-    //  ... make the current OBJECT board the solution OBJECT board by creating
-    //  a new solution OBJECT board
-    //  solutionBoard = currentBoard.
-    // Otherwise...
-    //  ... currentBoard = solutionBoard.
-
-    col++;
-    if (col >= n) {
-      col = 0;
-      row++;
-    }
-  } 
-  return copyBoard(solutionBoard);
-};
-
-// return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
-window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
-
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  // Set initial piece at top left corner and enter recursive tree.
+  currentBoard.togglePiece(0, 0);
+  goThroughSolutionTree(currentBoard);
+  console.log(JSON.stringify(solutionCount));
+  solutionCount = solutionHolder.length;
+  //console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  //return solutionCount;
   return solutionCount;
 };
